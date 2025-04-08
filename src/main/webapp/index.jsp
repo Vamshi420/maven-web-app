@@ -4,7 +4,7 @@
 
 <a href="www.linkedin.com/in/srinu-nenavath-97970991">Click hear to see the profile</a>
   
-  <h2> Call Us : + 91 - 95 05 58 39 18 / 88 86 04 44 56</h2>
+  <h2> Call Us : + 91 - 99 48 82 65 28 / 88 86 04 44 56</h2>
   
   <h3> Ofc Location : Ameerpet, DilSukhNagar Hyderabad </h3>
   
