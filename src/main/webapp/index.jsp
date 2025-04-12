@@ -1,6 +1,6 @@
 <html>
 <body>
-<h1><font color='red'> Welcome to Mangalarapu Vamshi IT - Software Training Institute <font></h1>
+<h1><font color='red'> Welcome to thota nithish patel IT - Software Training Institute <font></h1>
 
 <a href="www.linkedin.com/in/srinu-nenavath-97970991">Click hear to see the profile</a>
   
