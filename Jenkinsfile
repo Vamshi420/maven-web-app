@@ -2,7 +2,7 @@ pipeline {
     agent any
 
     tools {
-        maven 'maven' // 👈 this should match your Jenkins Maven tool name
+        maven 'maven' // Make sure this is set in Jenkins Global Tool Config
     }
 
     stages {
@@ -18,12 +18,10 @@ pipeline {
             }
         }
 
-        stage('Deploy to Tomcat') {
+        stage('Deploy') {
             steps {
-                // Replace with actual deployment logic
-                sh 'cp target/*.war /path/to/tomcat/webapps/'
+                sh 'cp target/*.war /opt/tomcat/webapps/' // Make sure Jenkins has access
             }
         }
     }
 }
-
