@@ -2,15 +2,15 @@ pipeline {
     agent any
 
     tools {
-        maven 'maven-3.9.9'  // Make sure this matches Jenkins Global Tool Configuration
+        maven 'maven-3.9.9' // Make sure this name matches Jenkins' Global Tool Configuration
     }
 
     environment {
-        PATH = "$PATH:/opt/maven/bin"
+        PATH = "${PATH}:/opt/maven/bin"
     }
 
     stages {
-        stage('Checkout Code') {
+        stage('Clone Code') {
             steps {
                 git 'https://github.com/Vamshi420/maven-web-app.git'
             }
@@ -25,7 +25,7 @@ pipeline {
         stage('SonarQube Analysis') {
             steps {
                 withSonarQubeEnv('sonarqube') {
-                    sh 'mvn sonar:sonar'
+                    sh 'mvn sonar:sonar -Dsonar.projectKey=01-maven-web-app'
                 }
             }
         }
@@ -37,5 +37,4 @@ pipeline {
                 }
             }
         }
-    }
 }
