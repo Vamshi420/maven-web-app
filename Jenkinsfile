@@ -30,18 +30,5 @@ pipeline {
                 }
             }
         }
-
-        stage('Deploy to Tomcat') {
-            steps {
-                sh '''
-                    WAR_FILE=target/*.war
-                    TOMCAT_USER=admin
-                    TOMCAT_PASS=admin
-                    TOMCAT_URL=http://192.168.3.126:8080
-
-                    curl -v -u $TOMCAT_USER:$TOMCAT_PASS --upload-file $WAR_FILE "$TOMCAT_URL/manager/text/deploy?path=/myweb&update=true"
-                '''
-            }
-        }
-    }
+    }    
 }
