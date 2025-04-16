@@ -1,23 +1,22 @@
 pipeline {
     agent any
 
+    tools {
+        maven 'maven-3.9.9'  // Make sure this matches Jenkins Global Tool Configuration
+    }
+
     environment {
         PATH = "$PATH:/opt/maven/bin"
     }
 
-    tools {
-        maven 'maven-3.9.9' // ✅ Must match exactly with your Jenkins tool name
-    }
-
     stages {
-
         stage('Checkout Code') {
             steps {
                 git 'https://github.com/Vamshi420/maven-web-app.git'
             }
         }
 
-        stage('Build with Maven') {
+        stage('Build') {
             steps {
                 sh 'mvn clean package'
             }
@@ -25,10 +24,18 @@ pipeline {
 
         stage('SonarQube Analysis') {
             steps {
-                withSonarQubeEnv('sonarqube') { // ✅ Must match Jenkins Sonar config name
+                withSonarQubeEnv('sonarqube') {
                     sh 'mvn sonar:sonar'
                 }
             }
         }
-    }    
+
+        stage('Quality Gate') {
+            steps {
+                timeout(time: 1, unit: 'MINUTES') {
+                    waitForQualityGate abortPipeline: true
+                }
+            }
+        }
+    }
 }
