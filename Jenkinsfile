@@ -4,14 +4,17 @@ pipeline {
     environment {
         MAVEN_HOME = '/opt/maven'
         JAVA_HOME = '/usr/lib/jvm/java-17-amazon-corretto.x86_64'
+        TOMCAT_USER = 'admin'
+        TOMCAT_PASS = 'admin123'
+        TOMCAT_URL = 'http://localhost:8080/manager/text/deploy?path=/maven-web-app&update=true'
     }
 
     tools {
-        maven 'maven' // Replace 'MAVEN' with your Maven tool name in Jenkins config
+        maven 'maven' // Make sure this is configured in Jenkins (Global Tool Configuration)
     }
 
     stages {
-        stage('Checkout from Git') {
+        stage('Clone from GitHub') {
             steps {
                 git url: 'https://github.com/Vamshi420/maven-web-app.git', branch: 'master'
             }
@@ -25,23 +28,21 @@ pipeline {
 
         stage('Deploy to Tomcat') {
             steps {
-                withCredentials([usernamePassword(credentialsId: 'tomcat-credentials', usernameVariable: 'admin', passwordVariable: 'admin123')]) {
-                    sh '''
-                        curl -v --fail -u $TOMCAT_USER:$TOMCAT_PASS \
-                        --upload-file target/maven-web-app.war \
-                        "http://localhost:8080/manager/text/deploy?path=/maven-web-app&update=true"
-                    '''
-                }
+                sh '''
+                    curl -v --fail -u $TOMCAT_USER:$TOMCAT_PASS \
+                    --upload-file target/maven-web-app.war \
+                    "$TOMCAT_URL"
+                '''
             }
         }
     }
 
     post {
         success {
-            echo '✅ Build and deployment successful!'
+            echo '✅ Build & deployment successful!'
         }
         failure {
-            echo '❌ Deployment failed.'
+            echo '❌ Something went wrong. Check logs above.'
         }
     }
 }
