@@ -6,7 +6,7 @@ pipeline {
         JAVA_HOME = '/usr/lib/jvm/java-17-amazon-corretto.x86_64'
         TOMCAT_USER = 'admin'
         TOMCAT_PASS = 'admin123'
-        TOMCAT_URL = 'http://localhost:8080/manager/text/deploy?path=/maven-web-app&update=true'
+        TOMCAT_URL = 'http://52.66.203.33:8080/:8080/manager/text/deploy?path=/maven-web-app&update=true'
     }
 
     tools {
