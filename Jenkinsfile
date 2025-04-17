@@ -1,40 +1,50 @@
 pipeline {
     agent any
 
-    tools {
-        maven 'maven-3.9.9' // Make sure this name matches Jenkins' Global Tool Configuration
+    environment {
+        MAVEN_HOME = '/opt/maven' // Change this if Maven is in a different path
+        JAVA_HOME = '/usr/lib/jvm/java-17-amazon-corretto.x86_64' // Adjust if needed
     }
 
-    environment {
-        PATH = "${PATH}:/opt/maven/bin"
+    tools {
+        maven 'maven' // Name of Maven tool configured in Jenkins (Manage Jenkins → Global Tool Configuration)
     }
 
     stages {
-        stage('Clone Code') {
+        stage('Clone Repository') {
             steps {
-                git 'https://github.com/Vamshi420/maven-web-app.git'
+                git url: 'https://github.com/Vamshi420/maven-web-app.git', branch: 'master'
             }
         }
 
-        stage('Build') {
+        stage('Build with Maven') {
             steps {
-                sh 'mvn clean package'
+                sh 'mvn clean install'
             }
         }
 
-        stage('SonarQube Analysis') {
+        stage('Deploy to Tomcat') {
             steps {
-                withSonarQubeEnv('sonarqube') {
-                    sh 'mvn sonar:sonar -Dsonar.projectKey=01-maven-web-app'
+                script {
+                    def warFile = 'target/maven-web-app.war'
+                    def tomcatUrl = 'http://52.66.203.33:8080//manager/text/deploy?path=/maven-web-app&update=true'
+
+                    withCredentials([usernamePassword(credentialsId: 'tomcat-credentials', usernameVariable: 'admin', passwordVariable: 'admin123')]) {
+                        sh """
+                            curl -u $TOMCAT_USER:$TOMCAT_PASS --upload-file $warFile "$tomcatUrl"
+                        """
+                    }
                 }
             }
         }
+    }
 
-        stage('Quality Gate') {
-            steps {
-                timeout(time: 1, unit: 'MINUTES') {
-                    waitForQualityGate abortPipeline: true
-                }
-            }
+    post {
+        success {
+            echo '🎉 Deployment successful!'
         }
+        failure {
+            echo '❌ Deployment failed.'
+        }
+    }
 }
