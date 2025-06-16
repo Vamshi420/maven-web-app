@@ -2,18 +2,18 @@ pipeline {
     agent any
 
     tools {
-        maven 'Maven3'        // Ensure Maven3 is configured in Jenkins global tools
+        maven 'maven'        // Ensure Maven3 is configured in Jenkins global tools
         jdk 'jdk17'           // Make sure jdk17 is installed and configured in Jenkins
     }
 
     environment {
-        GIT_REPO = 'https://github.com/Vamshi420/srinivas1987devops.git' // Updated repo
+        GIT_REPO = 'https://github.com/Vamshi420/maven-web-app.git' // Updated repo
     }
 
     stages {
         stage('Checkout') {
             steps {
-                git url: "${GIT_REPO}", branch: 'dev1'
+                git url: "${GIT_REPO}", branch: 'master'
             }
         }
 
