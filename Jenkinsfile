@@ -20,7 +20,7 @@ pipeline {
             steps {
                 script {
                     // Deploy WAR file to Tomcat
-                    def deployUrl = TOMCAT_URL
+                    def deployUrl = http://15.207.117.205:8080/
                     def deployCmd = """
                         curl -v --fail -u $TOMCAT_USER:$TOMCAT_PASS --upload-file target/maven-web-app.war "$deployUrl"
                     """
