@@ -1,7 +1,7 @@
 pipeline {
     agent any
     environment {
-        TOMCAT_URL = 'http://15.207.117.205:8080/manager/text/deploy?path=/maven-web-app&update=true'
+        TOMCAT_URL = 'http:/15.207.117.205:8080/manager/text/deploy?path=/maven-web-app&update=true'
         TOMCAT_USER = 'tomcat'
         TOMCAT_PASS = 'tomcat'
     }
