@@ -1,40 +1,33 @@
 pipeline {
     agent any
+
     environment {
-        TOMCAT_URL = 'http://52.66.203.33:8080/manager/text/deploy?path=/maven-web-app&update=true'
-        TOMCAT_USER = 'admin'
-        TOMCAT_PASS = 'admin123'
+        MAVEN_HOME = tool '/opt/maven' // Jenkins Maven tool name
     }
+
     stages {
-        stage('Clone from GitHub') {
+        stage('Clone from Git') {
             steps {
-                git 'https://github.com/Vamshi420/maven-web-app.git'
+                git url: 'https://github.com/Vamshi420/maven-web-app.git', branch: 'master'
             }
         }
+
         stage('Build with Maven') {
             steps {
-                sh 'mvn clean install'
+                sh "${MAVEN_HOME}/bin/mvn clean install"
             }
         }
+
         stage('Deploy to Tomcat') {
             steps {
-                script {
-                    // Deploy WAR file to Tomcat
-                    def deployUrl = TOMCAT_URL
-                    def deployCmd = """
-                        curl -v --fail -u $TOMCAT_USER:$TOMCAT_PASS --upload-file target/maven-web-app.war "$deployUrl"
-                    """
-                    sh deployCmd
-                }
+                deploy adapters: [
+                    tomcat9(credentialsId: 'tomcat-credentials', 
+                            path: '', 
+                            url: 'http://15.207.117.205:8080/manager/text')
+                ], 
+                contextPath: 'yourapp', 
+                war: '**/target/*.war'
             }
-        }
-    }
-    post {
-        always {
-            echo 'Build and deploy pipeline completed.'
-        }
-        failure {
-            echo '❌ Something went wrong. Check logs above.'
         }
     }
 }
