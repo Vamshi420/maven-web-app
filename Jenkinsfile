@@ -2,27 +2,27 @@ pipeline {
     agent any
 
     tools {
-        maven 'maven'  // Make sure 'maven' is configured in Jenkins > Global Tool Configuration
+        maven 'Maven3'        // Ensure Maven3 is configured in Jenkins global tools
+        jdk 'jdk17'           // Make sure jdk17 is installed and configured in Jenkins
     }
 
     environment {
-        SONAR_URL = 'http://43.204.218.218:9000'
-        SONAR_LOGIN = credentials('sonar-token') // Add your token in Jenkins Credentials as 'sonar-token'
-        TOMCAT_URL = 'http://15.207.14.236:8080/manager/text/deploy?path=/maven-web-app&update=true'
-        TOMCAT_CRED = credentials('tomcat-credentials') // Add tomcat username/password in Jenkins Credentials
+        GIT_REPO = 'https://github.com/Vamshi420/srinivas1987devops.git' // Updated repo
     }
 
     stages {
-        stage('Clone Repository') {
+        stage('Checkout') {
             steps {
-                git url: 'https://github.com/Vamshi420/maven-web-app.git', branch: 'master'
+                git url: "${GIT_REPO}", branch: 'dev1'
             }
         }
 
         stage('SonarQube Analysis') {
             steps {
-                withSonarQubeEnv('SonarQube') {
-                    sh 'mvn clean verify sonar:sonar -Dsonar.login=$SONAR_LOGIN'
+                withCredentials([string(credentialsId: 'sonar-token', variable: 'SONAR_TOKEN')]) {
+                    withSonarQubeEnv('SonarQube') {
+                        sh 'mvn clean verify sonar:sonar -Dsonar.token=$SONAR_TOKEN'
+                    }
                 }
             }
         }
@@ -35,11 +35,11 @@ pipeline {
 
         stage('Deploy to Tomcat') {
             steps {
-                script {
-                    def warFile = 'target/maven-web-app.war'
-                    sh """
-                        curl -v --fail -u $TOMCAT_CRED_USR:$TOMCAT_CRED_PSW --upload-file $warFile "$TOMCAT_URL"
-                    """
+                withCredentials([usernamePassword(credentialsId: 'tomcat-credentials', usernameVariable: 'TOMCAT_USER', passwordVariable: 'TOMCAT_PASS')]) {
+                    sh '''
+                        echo "Deploying to Tomcat..."
+                        curl -T target/*.war http://$TOMCAT_USER:$TOMCAT_PASS@15.207.14.236:8080/manager/text/deploy?path=/myapp&update=true
+                    '''
                 }
             }
         }
@@ -47,7 +47,7 @@ pipeline {
 
     post {
         success {
-            echo '✅ Build and deployment successful.'
+            echo '✅ Build, Sonar Scan, and Deployment succeeded!'
         }
         failure {
             echo '❌ Something went wrong. Check logs above.'
