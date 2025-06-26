@@ -8,7 +8,7 @@ pipeline {
 
     environment {
         GIT_REPO = 'https://github.com/Vamshi420/maven-web-app.git'  // Replace with your repo
-        TOMCAT_URL = 'http://3.109.54.9:8080/'                      // Tomcat IP and port
+        TOMCAT_URL = 'http://3.109.54.9:8080'                      // Tomcat IP and port
         DEPLOY_CONTEXT = 'maven-web-app.war'                                            // Context path ('' means ROOT)
         CREDENTIALS_ID = 'tomcat'                                // Jenkins credentials ID
     }
